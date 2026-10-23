@@ -30,6 +30,17 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <link rel="stylesheet" href="styles.css">
 </head>
+    <!-- Daily Motivation Modal -->
+<div id="motivationModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; justify-content:center; align-items:center;">
+    <div style="background:#252525; border-radius:16px; padding:40px 36px; max-width:460px; width:90%; text-align:center; border:1px solid #3a3a3a; position:relative;">
+        <div style="font-size:3rem; margin-bottom:16px;" id="motivationEmoji">✨</div>
+        <p style="font-size:0.8rem; color:#667eea; text-transform:uppercase; letter-spacing:2px; margin-bottom:12px; font-weight:600;">Daily Motivation</p>
+        <h2 style="font-size:1.3rem; color:#fff; line-height:1.6; font-weight:500; margin-bottom:10px;" id="motivationQuote">Loading...</h2>
+        <p style="font-size:0.85rem; color:#888; margin-bottom:28px;" id="motivationAuthor">— Unknown</p>
+        <button onclick="closeMotivationModal()" style="background:linear-gradient(135deg,#667eea,#764ba2); color:#fff; border:none; padding:12px 36px; border-radius:8px; font-size:1rem; font-weight:600; cursor:pointer; transition:opacity 0.2s;">Let's Go! 🚀</button>
+        <p style="font-size:0.75rem; color:#555; margin-top:16px;">Come back tomorrow for a new quote</p>
+    </div>
+</div>
 <body>
     <div class="sidebar">
         <div class="sidebar-top">
@@ -190,15 +201,52 @@
     </div>
 
     <script>
-        // Force redirect to login if not signed in
-        if (!localStorage.getItem('token')) {
-            window.location.href = 'login.html';
-        } else {
-            // Load the backend application script
-            const script = document.createElement('script');
-            script.src = 'app-backend.js';
-            document.body.appendChild(script);
-        }
+     <script>
+    const QUOTES = [
+        { text: "The secret of getting ahead is getting started.", author: "Mark Twain", emoji: "🚀" },
+        { text: "It always seems impossible until it's done.", author: "Nelson Mandela", emoji: "💪" },
+        { text: "Don't watch the clock; do what it does. Keep going.", author: "Sam Levenson", emoji: "⏰" },
+        { text: "The future depends on what you do today.", author: "Mahatma Gandhi", emoji: "🌱" },
+        { text: "You don't have to be great to start, but you have to start to be great.", author: "Zig Ziglar", emoji: "⚡" },
+        { text: "Small steps in the right direction beat giant leaps in the wrong one.", author: "Anonymous", emoji: "🎯" },
+        { text: "Done is better than perfect.", author: "Sheryl Sandberg", emoji: "✅" },
+        { text: "Focus on being productive instead of busy.", author: "Tim Ferriss", emoji: "🧠" },
+        { text: "Your task list is a promise to yourself. Keep it.", author: "Anonymous", emoji: "📋" },
+        { text: "One task at a time. That is enough.", author: "Anonymous", emoji: "☀️" },
+        { text: "Action is the foundational key to all success.", author: "Pablo Picasso", emoji: "🎨" },
+        { text: "Productivity is never an accident. It's the result of commitment.", author: "Paul J. Meyer", emoji: "🏆" },
+    ];
+
+    function showMotivationModal() {
+        const today = new Date().toDateString();
+        const lastSeen = localStorage.getItem('motivationLastSeen');
+        if (lastSeen === today) return; // Already seen today
+
+        // Pick a quote based on the day so it's consistent all day
+        const dayIndex = new Date().getDate() % QUOTES.length;
+        const q = QUOTES[dayIndex];
+
+        document.getElementById('motivationQuote').textContent = `"${q.text}"`;
+        document.getElementById('motivationAuthor').textContent = `— ${q.author}`;
+        document.getElementById('motivationEmoji').textContent = q.emoji;
+        document.getElementById('motivationModal').style.display = 'flex';
+    }
+
+    function closeMotivationModal() {
+        localStorage.setItem('motivationLastSeen', new Date().toDateString());
+        document.getElementById('motivationModal').style.display = 'none';
+    }
+
+    // Auth check + show motivation
+    if (!localStorage.getItem('token')) {
+        window.location.href = 'login.html';
+    } else {
+        showMotivationModal(); // Show quote before board loads
+        const script = document.createElement('script');
+        script.src = 'app-backend.js';
+        document.body.appendChild(script);
+    }
+</script>
     </script>
 </body>
 </html>
